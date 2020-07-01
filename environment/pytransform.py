@@ -185,41 +185,6 @@ def get_hd_sn():
 def show_hd_info():
     return _pytransform.show_hd_info()
 
-def get_license_info():
-    info = {
-        'expired': 'Never',
-        'restrict_mode': 'Enabled',
-        'HARDDISK': 'Any',
-        'IFMAC': 'Any',
-        'IFIPV4': 'Any',
-        'DOMAIN': 'Any',
-        'CODE': '',
-    }
-    rcode = get_registration_code().decode()
-    index = 0
-    if rcode.startswith('*TIME:'):
-        from time import ctime
-        index = rcode.find('\n')
-        info['expired'] = ctime(float(rcode[6:index]))
-        index += 1
-
-    if rcode[index:].startswith('*FLAGS:'):
-        info['restrict_mode'] = 'Disabled'
-        index += len('*FLAGS:') + 1
-
-    prev = None
-    start = index
-    for k in ['HARDDISK', 'IFMAC', 'IFIPV4', 'DOMAIN', 'FIXKEY', 'CODE']:
-        index = rcode.find('*%s:' % k)
-        if index > -1:
-            if prev is not None:
-                info[prev] = rcode[start:index]
-            prev = k
-            start = index + len(k) + 2
-    info['CODE'] = rcode[start:]
-
-    return info
-
 # Load _pytransform library
 def _load_library(path=None):
     if path is None:
@@ -240,8 +205,6 @@ def _load_library(path=None):
             m = cdll.LoadLibrary(os.path.join(libpath, '_pytransform.dylib'))
         elif plat == 'windows':
             m = cdll.LoadLibrary(os.path.join(libpath, '_pytransform.dll'))
-        elif plat == 'freebsd':
-            m = cdll.LoadLibrary(os.path.join(libpath, '_pytransform.so'))
         else:
             raise RuntimeError('Platform not supported')
     except Exception:

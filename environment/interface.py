@@ -51,6 +51,8 @@ class Environment:
         # import obs construct class
         if 'raw' == side1_obs_ind:
             self.side1_obs_path = 'raw'
+        elif 'vector' == side1_obs_ind:
+            self.side1_obs_path = 'vector'
         else:
             self.side1_obs_path = 'obs_construct.' + side1_obs_ind + '.construct'
             self.agent1_obs_module = importlib.import_module(self.side1_obs_path)
@@ -58,6 +60,8 @@ class Environment:
                                                                   self.side1_fighter_num)
         if 'raw' == side2_obs_ind:
             self.side2_obs_path = 'raw'
+        elif 'vector' == side2_obs_ind:
+            self.side2_obs_path = 'vector'
         else:
             self.side2_obs_path = 'obs_construct.' + side2_obs_ind + '.construct'
             self.agent2_obs_module = importlib.import_module(self.side2_obs_path)
@@ -72,6 +76,10 @@ class Environment:
         """
         return self.env.done
 
+    def get_obs_vector(self):
+        side1_obs_data, side2_obs_data = self.env.get_obs_vector()
+        return side1_obs_data, side2_obs_data
+
     def get_obs(self):
         """
         Get image-based observation
@@ -79,13 +87,19 @@ class Environment:
         :return: side2_obs
         """
         side1_obs_raw_dict, side2_obs_raw_dict = self.get_obs_raw()
+        side1_obs_data, side2_obs_data = self.get_obs_vector()
+        # side2_detector_data_obs_list, side2_fighter_data_obs_list, side2_joint_data_obs_dict = self.env.get_obs_raw()
         if 'raw' == self.side1_obs_path:
             side1_obs = side1_obs_raw_dict
+        elif 'vector' == self.side1_obs_path:
+            side1_obs = side1_obs_data
         else:
             side1_obs = self.agent1_obs.obs_construct(side1_obs_raw_dict)
 
         if 'raw' == self.side2_obs_path:
             side2_obs = side2_obs_raw_dict
+        elif 'vector' == self.side2_obs_path:
+            side2_obs = side2_obs_data
         else:
             side2_obs = self.agent2_obs.obs_construct(side2_obs_raw_dict)
 
