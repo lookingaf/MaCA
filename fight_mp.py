@@ -26,6 +26,7 @@ if __name__ == "__main__":
     parser.add_argument("--random_pos", action="store_true", help='if the initial positions are random or fix')
     parser.add_argument("--log", action="store_true", help='saving log')
     parser.add_argument("--log_path", type=str, default="default_log", help='log folder name')
+    parser.add_argument("--ext_render", action="store_true", help='external render enable')
     args = parser.parse_args()
 
     print('Map:', args.map)
@@ -66,7 +67,7 @@ if __name__ == "__main__":
     else:
         log_flag = False
     env = Environment(map_path, 'raw', 'raw', max_step=args.max_step, render=True,
-                      random_pos=args.random_pos, log=log_flag)
+                      random_pos=args.random_pos, log=log_flag, external_render=args.ext_render)
     # get map info
     size_x, size_y = env.get_map_size()
     side1_detector_num, side1_fighter_num, side2_detector_num, side2_fighter_num = env.get_unit_num()
