@@ -216,3 +216,5 @@ if __name__ == "__main__":
         print('Side 2 timeout %d times:' % len(agent2_timeout_list))
         print(agent2_timeout_list)
     input("Press the <ENTER> key to continue...")
+    exit(0)
+
