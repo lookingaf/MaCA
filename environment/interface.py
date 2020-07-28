@@ -86,8 +86,11 @@ class Environment:
         :return: side1_obs
         :return: side2_obs
         """
+        side1_obs_data = []
+        side2_obs_data = []
         side1_obs_raw_dict, side2_obs_raw_dict = self.get_obs_raw()
-        side1_obs_data, side2_obs_data = self.get_obs_vector()
+        if 'vector' == self.side1_obs_path or 'vector' == self.side2_obs_path:
+            side1_obs_data, side2_obs_data = self.get_obs_vector()
         # side2_detector_data_obs_list, side2_fighter_data_obs_list, side2_joint_data_obs_dict = self.env.get_obs_raw()
         if 'raw' == self.side1_obs_path:
             side1_obs = side1_obs_raw_dict
