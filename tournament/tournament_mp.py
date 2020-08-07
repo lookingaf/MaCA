@@ -9,6 +9,7 @@
 @desc: 
 """
 
+import argparse
 import importlib
 import os
 import time
@@ -23,7 +24,7 @@ SCORE_DRAW = 1
 SCORE_LOSS = 0
 
 
-def run(agent1_name, agent2_name, map_name, round_num, max_step, random_pos=False):
+def run(agent1_name, agent2_name, map_name, round_num, max_step, random_pos=False, external_render=False):
     '''
 
     :param agent1_name: 红方名称
@@ -61,7 +62,8 @@ def run(agent1_name, agent2_name, map_name, round_num, max_step, random_pos=Fals
         print('Error: agent2 file not exist!')
         exit(-1)
     # make env
-    env = Environment(map_path, 'raw', 'raw', max_step=max_step, render=True, random_pos=random_pos, log=log_flag)
+    env = Environment(map_path, 'raw', 'raw', max_step=max_step, render=True, random_pos=random_pos, log=log_flag,
+                      external_render=external_render, side1_name=agent1_name, side2_name=agent2_name)
     # get map info
     size_x, size_y = env.get_map_size()
     side1_detector_num, side1_fighter_num, side2_detector_num, side2_fighter_num = env.get_unit_num()
@@ -139,6 +141,10 @@ def run(agent1_name, agent2_name, map_name, round_num, max_step, random_pos=Fals
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--ext_render", action="store_true", help='external render enable')
+    args = parser.parse_args()
+
     map_name = ''
     round_num = 0
     max_step = 0
@@ -181,7 +187,7 @@ if __name__ == "__main__":
             agent1 = agent_list[x]
             agent2 = agent_list[y]
             print(agent1 + ' vs ' + agent2)
-            agent1_win_rounds, agent2_win_rounds, draw_rounds, agent1_crash_rounds, agent2_crash_rounds, agent1_timeout_rounds, agent2_timeout_rounds, agent1_launch_failure_rounds, agent2_launch_failure_rounds = run(agent1, agent2, map_name, int(round_num / 2), max_step)
+            agent1_win_rounds, agent2_win_rounds, draw_rounds, agent1_crash_rounds, agent2_crash_rounds, agent1_timeout_rounds, agent2_timeout_rounds, agent1_launch_failure_rounds, agent2_launch_failure_rounds = run(agent1, agent2, map_name, int(round_num / 2), max_step, external_render=args.ext_render)
             # record
             total_rounds = agent1_win_rounds + agent2_win_rounds + draw_rounds
             win_rounds_per_agent[x] += agent1_win_rounds

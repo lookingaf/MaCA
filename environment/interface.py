@@ -17,12 +17,14 @@ from world.replay import Replay
 from world.load_map import Map
 import world.position_calc as position_calc
 
+
 class Environment:
     """
     Environment interface
     """
     def __init__(self, map_path, side1_obs_ind, side2_obs_ind, max_step=5000, render=False, render_interval=1,
-                 random_pos=False, log=False, random_seed=-1, external_render=False):
+                 random_pos=False, log=False, random_seed=-1, external_render=False, side1_name='unknown',
+                 side2_name='unknown'):
         """
         Environment initiation
         :param size_x: battlefield horizontal size. got from LoadMap.get_map_size
@@ -47,7 +49,8 @@ class Environment:
         self.side1_detector_list, self.side1_fighter_list, self.side2_detector_list, self.side2_fighter_list = self.map.get_unit_property_list()
         self.env = BattleField(self.size_x, self.size_y, self.side1_detector_list, self.side1_fighter_list,
                                self.side2_detector_list, self.side2_fighter_list, max_step, render, render_interval,
-                               random_pos, log, random_seed, external_render)
+                               random_pos, log, random_seed, external_render, side1_name=side1_name,
+                               side2_name=side2_name)
         # import obs construct class
         if 'raw' == side1_obs_ind:
             self.side1_obs_path = 'raw'
@@ -199,13 +202,13 @@ class PlayBack:
     """
     Replay
     """
-    def __init__(self, log_name, display_delay_time=0):
+    def __init__(self, log_name, external_render=False, display_delay_time=0):
         """
         Initial replay class
         :param log_name:
         :param display_delay_time:
         """
-        self.rp = Replay(log_name, display_delay_time)
+        self.rp = Replay(log_name, external_render, display_delay_time)
 
     def start(self):
         """

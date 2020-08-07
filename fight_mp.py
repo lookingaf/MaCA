@@ -67,7 +67,8 @@ if __name__ == "__main__":
     else:
         log_flag = False
     env = Environment(map_path, 'raw', 'raw', max_step=args.max_step, render=True,
-                      random_pos=args.random_pos, log=log_flag, external_render=args.ext_render)
+                      random_pos=args.random_pos, log=log_flag, external_render=args.ext_render, side1_name=args.agent1,
+                      side2_name=args.agent2)
     # get map info
     size_x, size_y = env.get_map_size()
     side1_detector_num, side1_fighter_num, side2_detector_num, side2_fighter_num = env.get_unit_num()

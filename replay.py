@@ -15,8 +15,10 @@ import argparse
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("log", type=str, help='log name')
+    parser.add_argument("--ext_render", action="store_true", help='external render enable')
     args = parser.parse_args()
 
-    replay_obj = PlayBack(args.log)
+    replay_obj = PlayBack(args.log, external_render=args.ext_render)
     replay_obj.start()
     input("Press the <ENTER> key to continue...")
+    exit(0)
