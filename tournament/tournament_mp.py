@@ -135,6 +135,7 @@ def run(agent1_name, agent2_name, map_name, round_num, max_step, random_pos=Fals
                 else:
                     draw_times += 1
                 break
+    del env
     agent1.terminate()
     agent2.terminate()
     return side1_win_times, side2_win_times, draw_times, len(agent1_crash_list), len(agent2_crash_list), len(agent1_timeout_list), len(agent2_timeout_list),0, 0

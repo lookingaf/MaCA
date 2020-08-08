@@ -50,6 +50,8 @@ class AgentProc(Process):
     def __decision_proc(self):
         while True:
             obs_data = self.recv_queue.get()
+            if obs_data == 'done':
+                exit(0)
             obs_raw_dict = obs_data['obs_raw_dict']
             step_cnt = obs_data['step_cnt']
             if self.obs_ind == 'raw':
@@ -92,6 +94,7 @@ class AgentCtrl:
     def terminate(self):
         if self.agent:
             if self.agent.is_alive():
+                self.send_q.put('done')
                 self.agent.terminate()
         self.agent = None
         if self.send_q:
