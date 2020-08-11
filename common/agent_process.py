@@ -11,6 +11,7 @@
 import importlib
 import time
 from multiprocessing import Process, Queue
+import os
 
 AGENT_INIT_TIMEOUT = 60
 AGENT_RESP_TIMEOUT = 60
@@ -20,7 +21,7 @@ class AgentProc(Process):
     '''
     agent子进程
     '''
-    def __init__(self, agent_name, size_x, size_y, detector_num, fighter_num, recv_queue, send_queue):
+    def __init__(self, agent_name, size_x, size_y, detector_num, fighter_num, recv_queue, send_queue, gpu_num):
         super().__init__()
         self.agent_name = agent_name
         self.size_x = size_x
@@ -32,8 +33,10 @@ class AgentProc(Process):
         self.agent = None
         self.obs_construct = None
         self.obs_ind = 'raw'
+        self.gpu_num = gpu_num
 
     def run(self):
+        os.environ['CUDA_VISIBLE_DEVICES'] = str(self.gpu_num)
         agent_import_path = 'agent.' + self.agent_name + '.agent'
         agent_module = importlib.import_module(agent_import_path)
         self.agent = agent_module.Agent()
@@ -67,7 +70,7 @@ class AgentCtrl:
     '''
     agent子进程维护
     '''
-    def __init__(self, agent_name, size_x, size_y, detector_num, fighter_num):
+    def __init__(self, agent_name, size_x, size_y, detector_num, fighter_num, gpu_num):
         self.agent_name = agent_name
         self.size_x = size_x
         self.size_y = size_y
@@ -76,12 +79,13 @@ class AgentCtrl:
         self.send_q = None
         self.recv_q = None
         self.agent = None
+        self.gpu_num = gpu_num
 
     def agent_init(self):
         self.send_q = Queue(1)
         self.recv_q = Queue(1)
         self.agent = AgentProc(self.agent_name, self.size_x, self.size_y, self.detector_num, self.fighter_num,
-                               self.send_q, self.recv_q)
+                               self.send_q, self.recv_q, self.gpu_num)
         self.agent.start()
         try:
             agent_msg = self.recv_q.get(True, AGENT_INIT_TIMEOUT)
@@ -136,6 +140,6 @@ class AgentCtrl:
         self.send_q = Queue(1)
         self.recv_q = Queue(1)
         self.agent = AgentProc(self.agent_name, self.size_x, self.size_y, self.detector_num, self.fighter_num,
-                               self.send_q, self.recv_q)
+                               self.send_q, self.recv_q, self.gpu_num)
         self.agent.start()
         self.recv_q.get()

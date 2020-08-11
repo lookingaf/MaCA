@@ -27,6 +27,8 @@ if __name__ == "__main__":
     parser.add_argument("--log", action="store_true", help='saving log')
     parser.add_argument("--log_path", type=str, default="default_log", help='log folder name')
     parser.add_argument("--ext_render", action="store_true", help='external render enable')
+    parser.add_argument("--agent1_gpu", type=int, default=-1, help='agent1 assigned GPU index')
+    parser.add_argument("--agent2_gpu", type=int, default=-1, help='agent2 assigned GPU index')
     args = parser.parse_args()
 
     print('Map:', args.map)
@@ -74,8 +76,8 @@ if __name__ == "__main__":
     side1_detector_num, side1_fighter_num, side2_detector_num, side2_fighter_num = env.get_unit_num()
 
     # create agent
-    agent1 = AgentCtrl(args.agent1, size_x, size_y, side1_detector_num, side1_fighter_num)
-    agent2 = AgentCtrl(args.agent2, size_x, size_y, side2_detector_num, side2_fighter_num)
+    agent1 = AgentCtrl(args.agent1, size_x, size_y, side1_detector_num, side1_fighter_num, args.agent1_gpu)
+    agent2 = AgentCtrl(args.agent2, size_x, size_y, side2_detector_num, side2_fighter_num, args.agent2_gpu)
     if not agent1.agent_init():
         print('ERROR: Agent1 init failed!')
         agent1.terminate()

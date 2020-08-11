@@ -24,17 +24,19 @@ SCORE_DRAW = 1
 SCORE_LOSS = 0
 
 
-def run(agent1_name, agent2_name, map_name, round_num, max_step, random_pos=False, external_render=False):
-    '''
-
+def run(agent1_name, agent2_name, map_name, round_num, max_step, agent1_gpu, agent2_gpu, random_pos=False, external_render=False):
+    """
     :param agent1_name: 红方名称
     :param agent2_name: 蓝方名称
     :param map_name: 地图名称
     :param round_num: 对战局数
     :param max_step: 单局最大step
+    :param agent1_gpu: 红方代码分配的gpu
+    :param agent2_gpu: 蓝方代码分配的gpu
     :param random_pos: 随机起始位置
     :return: agent1_win_times, agent2_win_times, draw_times, agent1_crash_times, agent2_crash_times, agent1_timeout_times, agent2_timeout_times, agent1_launch_failure_times, agent2_launch_failure_times
-    '''
+    """
+
     side1_win_times = 0
     side2_win_times = 0
     draw_times = 0
@@ -68,8 +70,8 @@ def run(agent1_name, agent2_name, map_name, round_num, max_step, random_pos=Fals
     size_x, size_y = env.get_map_size()
     side1_detector_num, side1_fighter_num, side2_detector_num, side2_fighter_num = env.get_unit_num()
     # create agent
-    agent1 = AgentCtrl(agent1_name, size_x, size_y, side1_detector_num, side1_fighter_num)
-    agent2 = AgentCtrl(agent2_name, size_x, size_y, side2_detector_num, side2_fighter_num)
+    agent1 = AgentCtrl(agent1_name, size_x, size_y, side1_detector_num, side1_fighter_num, agent1_gpu)
+    agent2 = AgentCtrl(agent2_name, size_x, size_y, side2_detector_num, side2_fighter_num, agent2_gpu)
     if not agent1.agent_init():
         print('ERROR: Agent1 ' + agent1_name + ' init failed!')
         agent1.terminate()
@@ -146,10 +148,6 @@ if __name__ == "__main__":
     parser.add_argument("--ext_render", action="store_true", help='external render enable')
     args = parser.parse_args()
 
-    map_name = ''
-    round_num = 0
-    max_step = 0
-    agent_list = []
     summary_table = []
     # load config
     with open('tournament/config.ini', 'r') as f:
@@ -157,11 +155,15 @@ if __name__ == "__main__":
         map_name = config_dict['map_name']
         round_num = config_dict['round_num']
         max_step = config_dict['max_step']
+        agent1_gpu = config_dict['agent1_gpu']
+        agent2_gpu = config_dict['agent2_gpu']
         agent_list = config_dict['agent_list']
 
     print('map_name: %s' % map_name)
     print('round_num: %d' % round_num)
     print('max_step: %d' % max_step)
+    print('agent1_gpu: %d' % agent1_gpu)
+    print('agent2_gpu: %d' % agent2_gpu)
     print('agent_list: ')
     print(agent_list)
 
@@ -188,7 +190,7 @@ if __name__ == "__main__":
             agent1 = agent_list[x]
             agent2 = agent_list[y]
             print(agent1 + ' vs ' + agent2)
-            agent1_win_rounds, agent2_win_rounds, draw_rounds, agent1_crash_rounds, agent2_crash_rounds, agent1_timeout_rounds, agent2_timeout_rounds, agent1_launch_failure_rounds, agent2_launch_failure_rounds = run(agent1, agent2, map_name, int(round_num / 2), max_step, external_render=args.ext_render)
+            agent1_win_rounds, agent2_win_rounds, draw_rounds, agent1_crash_rounds, agent2_crash_rounds, agent1_timeout_rounds, agent2_timeout_rounds, agent1_launch_failure_rounds, agent2_launch_failure_rounds = run(agent1, agent2, map_name, int(round_num / 2), max_step, agent1_gpu, agent2_gpu, external_render=args.ext_render)
             # record
             total_rounds = agent1_win_rounds + agent2_win_rounds + draw_rounds
             win_rounds_per_agent[x] += agent1_win_rounds
