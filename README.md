@@ -45,3 +45,12 @@ The log structure of MaCA is a set of .macalog files, they will be saved in path
 When you run the [replay.py](replay.py), You must input a "log-name" as the parameter to specify which log you want to replay.
 
 For more information, see [tutorial](/doc/tutorial.md)
+
+### My finished part
+
+I applied the proximal policy optimization method to train the agent.
+
+Training code:[main.py](/train/ppo/main.py)
+
+Training model:[ppo.py](/train/ppo/ppo.py)
+
