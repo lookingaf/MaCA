@@ -3,7 +3,7 @@
 """
 @author: Lookingaf
 @software: PyCharm
-@file: agent.py
+@file: ppo.py
 @time: 2021.1.19.14:48:54
 @desc: base class of agent
 """
